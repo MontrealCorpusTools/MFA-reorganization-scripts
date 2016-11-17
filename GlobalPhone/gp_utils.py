@@ -238,11 +238,11 @@ def load_graphemes(dict_dir):
 
 def globalphone_prep(source_dir, data_dir, lang_code):
     dict_dir = os.path.join(data_dir, 'dict')
-    graphemes = load_graphemes(dict_dir)
     files_dir = os.path.join(data_dir, 'files')
     if os.path.exists(files_dir):
         print('Using existing data directory.')
         return
+    graphemes = load_graphemes(dict_dir)
     print('Creating a consolidated data directory...')
     os.makedirs(files_dir, exist_ok = True)
     rmn_dir = os.path.join(source_dir, 'rmn')
