@@ -213,7 +213,7 @@ def copy_wav_files(in_dir, out_dir):
         if os.path.exists(out_file_name):
             continue
 
-        shutil.copy(os.path.join(in_dir, f), out_file_name)
+        shutil.copyfile(os.path.join(in_dir, f), out_file_name)
 
 def get_utterances_with_wavs(speaker_dir):
     wav_files = []
