@@ -2,6 +2,7 @@
 import os
 import shutil
 import re
+import romkan
 
 lang_encodings = {
                 'AR': 'iso-8859-1',
@@ -13,7 +14,7 @@ lang_encodings = {
                 'FR': 'iso-8859-1',
                 'GE': 'iso-8859-1',
                 'HA': 'utf8',
-                'JA': '',
+                'JA': 'eucjp',
                 'KO': 'korean',
                 'RU': 'koi8-r',
                 'PO': 'iso-8859-1',
@@ -137,6 +138,7 @@ def parse_rmn_file(path, output_dir, lang_code, wav_files):
                 if not name.startswith(lang_code):
                     name = lang_code + name
                 if name not in wav_files:
+                    print('Did not find wav file for {}.'.format(name))
                     continue
                 lab_path = os.path.join(output_dir, name + '.lab')
                 with open(lab_path, 'w') as fw:
@@ -165,6 +167,7 @@ def sanitize(line, lang_code, graphemes):
         newline.append(w)
     return ' '.join(newline)
 
+
 def parse_trl_file(path, output_dir, lang_code, wav_files, graphemes):
     file_line_pattern = re.compile('^;\s+(\d+)\s*:$')
     speaker_line_pattern = re.compile('^;(sprecherid|speakerid)\s((\w{2})?\d{2,3}).*$')
@@ -173,6 +176,7 @@ def parse_trl_file(path, output_dir, lang_code, wav_files, graphemes):
     with open(path, 'r', encoding = lang_encodings[lang_code]) as f:
         for line in f:
             line = line.strip()
+            print(line)
             if line == '':
                 continue
             if speaker is None:
@@ -256,7 +260,7 @@ def globalphone_prep(source_dir, data_dir, lang_code):
         wav_files = get_utterances_with_wavs(speaker_dir)
         output_speaker_dir = os.path.join(files_dir, speaker_id)
         os.makedirs(output_speaker_dir, exist_ok = True)
-        if lang_code in ['CH', 'WU', 'JA']:
+        if lang_code in ['CH', 'WU']:
             rmn_path = os.path.join(rmn_dir, '{}{}.rmn'.format(lang_code, speaker_id))
             parse_rmn_file(rmn_path, output_speaker_dir, lang_code, wav_files)
         else:
@@ -279,42 +283,13 @@ def cleanup_transcription(phone_sequence, lang_code):
     phone_sequence = phone_cleanup_pattern.sub('', phone_sequence).strip()
     return phone_sequence
 
-
-def globalphone_dict_prep(path, data_dir, lang_code):
-    if not os.path.exists(path):
-        print('No dictionary found.')
-        return
-    dict_dir = os.path.join(data_dir, 'dict')
-    if  os.path.exists(dict_dir):
-        print('Using existing dictionary.')
-        return
-    print('Preparing dictionary...')
-    os.makedirs(dict_dir, exist_ok = True)
-
-    extra_questions_path = os.path.join(dict_dir, 'extra_questions.txt')
-    lexicon_path = os.path.join(dict_dir, 'lexicon.txt')
-    grapheme_path = os.path.join(dict_dir, 'grapheme.txt')
-    lexicon_nosil_path = os.path.join(dict_dir, 'lexicon_nosil.txt')
-    lexiconp_path = os.path.join(dict_dir, 'lexiconp.txt')
-    nonsilence_phones_path = os.path.join(dict_dir, 'nonsilence_phones.txt')
-    optional_sil_path = os.path.join(dict_dir, 'optional_silence.txt')
-    sil_phone_path = os.path.join(dict_dir, 'silence_phones.txt')
-
-    with open(lexicon_path, 'w', encoding = 'utf8') as f:
-        f.write('!SIL\tsil\n<unk>\tspn\n')
-    with open(sil_phone_path, 'w', encoding = 'utf8') as f:
-        f.write('sil\nspn')
-    with open(extra_questions_path, 'w', encoding = 'utf8') as f:
-        f.write('sil spn\n')
-    with open(optional_sil_path, 'w', encoding = 'utf8') as f:
-        f.write('sil')
-
+def parse_dictionary_file(path, lang_code):
     nonsil = set()
 
     word_cleanup_pattern = re.compile(r'\(\d+\)')
     line_break_pattern = re.compile(r'\}\s+')
     word_pattern = re.compile(r'^{([^{}]+)\s+')
-    words = []
+    dictionary = {}
     word_characters = set()
     with open(path, 'r', encoding = 'utf8') as f:
         try:
@@ -343,27 +318,48 @@ def globalphone_dict_prep(path, data_dir, lang_code):
                 if len(matches) == 2 and matches[0] == matches[1]:
                     matches = matches[:1]
                 nonsil.update(matches)
-                words.append((word, ' '.join(matches)))
+                if word not in dictionary:
+                    dictionary[word] = []
+                dictionary[word].append(matches)
         except UnicodeDecodeError:
             s = f.readline()
             print(repr(s))
             print(f.readline())
             raise(Exception)
+    return dictionary, nonsil, word_characters
+
+def save_dictionary(dictionary, path):
+    with open(path, 'w', encoding = 'utf8') as f:
+        for w, pronunciations in dictionary.items():
+            for p in pronunciations:
+                outline = '{}\t{}\n'.format(w, ' '.join(p))
+                f.write(outline)
+
+
+def globalphone_dict_prep(source_dir, path, data_dir, lang_code):
+    if not os.path.exists(path):
+        print('No dictionary found.')
+        return
+    dict_dir = os.path.join(data_dir, 'dict')
+    #if  os.path.exists(dict_dir):
+    #    print('Using existing dictionary.')
+    #    return
+    print('Preparing dictionary...')
+    os.makedirs(dict_dir, exist_ok = True)
+
+
+    lexicon_path = os.path.join(dict_dir, '{}_dictionary.txt'.format(lang_code))
+    grapheme_path = os.path.join(dict_dir, 'grapheme.txt')
+
+    dictionary, nonsil, word_characters = parse_dictionary_file(path, lang_code)
+    if lang_code == 'JA':
+        print('Skipping Japanese')
+        return
+
+    save_dictionary(dictionary, lexicon_path)
+
 
     with open(grapheme_path, 'w', encoding = 'utf8') as f:
         for char in sorted(word_characters):
             f.write(char + '\n')
-
-    with open(lexicon_path, 'a', encoding = 'utf8') as lf, \
-        open(lexicon_nosil_path, 'w', encoding = 'utf8') as lnsf:
-        for w in words:
-            outline = '{}\t{}\n'.format(*w)
-            lf.write(outline)
-            lnsf.write(outline)
-
-    nonsil = sorted(nonsil)
-    with open(nonsilence_phones_path, 'w', encoding = 'utf8') as f:
-        f.write('\n'.join(nonsil))
-    with open(extra_questions_path, 'a', encoding = 'utf8') as f:
-        f.write(' '.join(nonsil))
     print('Done!')
