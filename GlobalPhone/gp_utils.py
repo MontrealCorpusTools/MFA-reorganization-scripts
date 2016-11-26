@@ -117,7 +117,7 @@ lang_phone_cleanup = {
                 'UA': [],
                 }
 
-def parse_rmn_file(path, output_dir, lang_code, wav_files):
+def parse_rmn_file(path, output_dir, lang_code, wav_files, graphemes):
     file_line_pattern = re.compile('^;\s+(\d+)\s*:$')
     speaker_line_pattern = re.compile('^;(sprecherid|speakerid)\s(\d{3})$')
     speaker = None
@@ -262,7 +262,7 @@ def globalphone_prep(source_dir, data_dir, lang_code):
         os.makedirs(output_speaker_dir, exist_ok = True)
         if lang_code in ['CH', 'WU']:
             rmn_path = os.path.join(rmn_dir, '{}{}.rmn'.format(lang_code, speaker_id))
-            parse_rmn_file(rmn_path, output_speaker_dir, lang_code, wav_files)
+            parse_rmn_file(rmn_path, output_speaker_dir, lang_code, wav_files, graphemes)
         else:
             trl_path = os.path.join(trl_dir, '{}{}.trl'.format(lang_code, speaker_id))
             parse_trl_file(trl_path, output_speaker_dir, lang_code, wav_files, graphemes)
