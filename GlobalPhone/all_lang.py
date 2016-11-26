@@ -53,7 +53,7 @@ if __name__ == '__main__':
             continue
         print(k)
 
-        globalphone_dict_prep(dict_paths[k], data_dirs[k], k)
+        globalphone_dict_prep(source_dirs[k],dict_paths[k], data_dirs[k], k)
 
         globalphone_prep(source_dirs[k], data_dirs[k], k)
 
