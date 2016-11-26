@@ -128,7 +128,7 @@ def parse_rmn_file(path, output_dir, lang_code, wav_files):
                 speaker_match = speaker_line_pattern.match(line.lower())
                 if speaker_match is None:
                     raise(Exception('The rmn file did not start with the speaker id.'))
-                speaker = speaker_match.groups()[0]
+                speaker = speaker_match.groups()[1]
             line = line.strip()
             file_match = file_line_pattern.match(line)
             if file_match is not None:
