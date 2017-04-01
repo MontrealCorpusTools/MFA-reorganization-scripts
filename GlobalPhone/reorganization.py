@@ -10,5 +10,6 @@ for speaker in os.listdir(base_dir):
     for f in os.listdir(s_dir):
         in_path = os.path.join(base_dir, speaker, f)
         out_path = os.path.join(output_dir, speaker, f)
-        os.remove(out_path)
+        if os.path.exists(out_path):
+            os.remove(out_path)
         shutil.copyfile(in_path, out_path)
