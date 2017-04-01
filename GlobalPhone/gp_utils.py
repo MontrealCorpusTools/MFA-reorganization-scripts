@@ -281,6 +281,8 @@ def cleanup_transcription(phone_sequence, lang_code):
     for r, s in lang_phone_cleanup[lang_code]:
         phone_sequence = r.sub(s, phone_sequence)
     phone_sequence = phone_cleanup_pattern.sub('', phone_sequence).strip()
+    if lang_code == 'CR':
+        phone_sequence = re.sub(r'^k a e r ', '', phone_sequence)
     return phone_sequence
 
 def parse_dictionary_file(path, lang_code):
