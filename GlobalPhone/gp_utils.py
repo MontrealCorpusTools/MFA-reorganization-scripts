@@ -194,9 +194,9 @@ def parse_trl_file(path, output_dir, lang_code, wav_files, graphemes):
                 current = file_match.groups()[0]
             elif current is not None:
                 name = '{}_{}'.format(speaker, current)
+                name = name.upper()
                 if not name.startswith(lang_code):
                     name = lang_code + name
-                name = name.upper()
 
                 lab_path = os.path.join(output_dir, name+'.lab')
                 print(name, name in wav_files, lab_path)
