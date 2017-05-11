@@ -173,10 +173,10 @@ def parse_trl_file(path, output_dir, lang_code, wav_files, graphemes):
     speaker_line_pattern = re.compile('^;(sprecherid|speakerid)\s((\w{2})?\d{2,3}).*$')
     speaker = None
     current = None
+    print('sample wav_files', wav_files[:10])
     with open(path, 'r', encoding = lang_encodings[lang_code]) as f:
         for line in f:
             line = line.strip()
-            print(line)
             if line == '':
                 continue
             if speaker is None:
@@ -194,6 +194,7 @@ def parse_trl_file(path, output_dir, lang_code, wav_files, graphemes):
                 current = file_match.groups()[0]
             elif current is not None:
                 name = '{}_{}'.format(speaker, current)
+                print(name)
                 if not name.startswith(lang_code):
                     name = lang_code + name
                 if name not in wav_files:
