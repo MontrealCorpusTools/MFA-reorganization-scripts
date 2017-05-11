@@ -5,6 +5,7 @@ import os
 import re
 import wave
 import contextlib
+import xlrd
 from scipy.io import wavfile
 from textgrid import TextGrid, IntervalTier
 import sys
@@ -43,6 +44,7 @@ sys.setdefaultencoding('utf-8')
 transcription_text_source = sys.argv[1]
 transcription_wav_source = sys.argv[2]
 transcription_output = sys.argv[3]
+metadata = sys.argv[4]
 
 # Function to convert timestamps to number of seconds
 def timestamp(time, file, lineNo):
@@ -145,12 +147,43 @@ def getWavLength(wav, wavDir):
 	duration = snd.shape[0] / float(sampFreq) # Returns in milliseconds
 	return duration
 
+# Function to get the speaker's name from the metadata (replacing A, B, C...)
+def getSpeaker(file, letter, sheet):
+	#print "file being passed: " + file
+	r = 0
+	textcode = sheet.col(0)	# File name col
+	for rowNo, row in enumerate(textcode):
+		#print "cell being checked: " + sheet.cell_value(rowNo, 0)
+		if sheet.cell_value(rowNo, 0) == file:
+			r = rowNo
+			#print sheet.cell_value(rowNo, 0)
+			break
+	speakerID = sheet.col(4)	# Speaker letter col
+	letter = re.sub(r"[^a-zA-Z]", "", letter)
+	while sheet.cell_value(r, 4) != letter:
+		r = r + 1
+	# Get first name
+	if sheet.cell_value(r, 11) != "":
+		first = sheet.cell_value(r, 11)
+	else:
+		first = "Placeholder1"
+	# Get last name
+	if sheet.cell_value(r, 12) != "":
+		last = sheet.cell_value(r, 12)
+	else:
+		last = "Placeholder2"
+	name = first + " " + last
+	return name
+
 
 if __name__ == '__main__':
 	try:	# Set up corpus error file
 		os.remove("corpuserrors.txt")
 	except OSError:
 		pass
+
+	excel = xlrd.open_workbook(metadata)	# Load in metadata
+	sheet = excel.sheet_by_index(1)
 
     # Loops through files and turns them into audio+transcription paired textgrids
 	for file in os.listdir(transcription_text_source):
@@ -196,7 +229,10 @@ if __name__ == '__main__':
 				# <$A> <ICE-CAN S3A-002 #1:1:A> <start=0:00.0000 end=0:02.0262>  <#> There should be three minutes
 
 				if line != "" and lineSplit[0][1] == '$' and lineSplit[0][2] != 'Z':	# Speaker Z = editorial commentary
-					speaker = lineSplit[0]
+					letter = lineSplit[0]
+					speaker = getSpeaker(file_name[0], letter, sheet)
+					if "Placeholder1" in speaker and "Placeholder2" in speaker:
+						speaker = speaker + " " + letter + " " + file_name[0]
 					if speaker not in speakers:
 						speakers[speaker] = 0	# Placeholder value
 						# Make a text tier for the new speaker
