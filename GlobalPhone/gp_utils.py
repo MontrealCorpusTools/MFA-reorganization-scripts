@@ -197,6 +197,7 @@ def parse_trl_file(path, output_dir, lang_code, wav_files, graphemes):
                 print(name)
                 if not name.startswith(lang_code):
                     name = lang_code + name
+                name = name.upper()
                 if name not in wav_files:
                     continue
                 lab_path = os.path.join(output_dir, name+'.lab')
