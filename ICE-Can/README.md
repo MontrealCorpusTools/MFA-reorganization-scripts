@@ -1,6 +1,6 @@
-# ICE-Canada Transcripts
+# ICE-Canada Corpus
 
-This folder contains 3 files for treating transcripts of the [ICE-Canada](https://dataverse.library.ualberta.ca/dvn/dv/VOICE) corpus before they can be aligned with the [Montreal Forced Aligner](http://montreal-forced-aligner.readthedocs.io/en/latest/index.html): ```mp3ToWav.py```, ```downsample.py```, and ```transcript_translate.py```. They should be run in this order.
+This folder contains 3 files for treating transcripts and audio files of the [ICE-Canada](https://dataverse.library.ualberta.ca/dvn/dv/VOICE) corpus before they can be aligned with the [Montreal Forced Aligner](http://montreal-forced-aligner.readthedocs.io/en/latest/index.html): ```mp3ToWav.py```, ```downsample.py```, and ```transcript_translate.py```. They should be run in this order.
 
 ## mp3ToWav.py
 
