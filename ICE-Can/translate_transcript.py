@@ -120,6 +120,8 @@ def cleanText(text):
 
 	# Strip tags
 	text = re.sub(r"foreign>.*</foreign", "", text)	# Foreign words
+	#text = re.sub(r"@>.*</@", "", text)				# Changed names
+	text = re.sub(r"(?<=@>).*(?=</@)", "beep_sound", text)
 	text = re.sub(r"indig>.*</indig", "", text)		# Indigenous words
 	text = re.sub(r"unclear>.*</unclear", "", text)	# Unclear words
 	text = re.sub(r"O>.*</O", "", text)				# Untranscribed text
@@ -129,8 +131,9 @@ def cleanText(text):
 	text = re.sub(r"quote>|</quote", "", text)			# Quote
 	text = re.sub(r"<.{1,3}>", "", text)				# All others
 	text = re.sub(r"(.{1,2}>)|(<.{1,2})|(</.{1,2})", "", text)
-	text = re.sub(r"(?<![a-zA-Z])-(?![a-zA-Z])", "", text)	# Deletes - except when surrounded by alphabet, eg. keeps "twenty-seventh"
-	text = re.sub(ur"[^a-zA-Z\sâêîôûéàèïëö-]", "", text)
+	text = re.sub(r"(?<![a-zA-Z])-(?![a-zA-Z])", "", text)	# Deletes -, except when surrounded by alphabet, eg. keeps "twenty-seventh"
+	text = re.sub(r"(?<![a-zA-Z])'(?![a-zA-Z])", "", text)	# Deletes ', except when surrounded by alphabet
+	text = re.sub(ur"[^a-zA-Z\s'_âêîôûéàèïëö-]", "", text)
 
 	text = " ".join(text.split())
 	return text
