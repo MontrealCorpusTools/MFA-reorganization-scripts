@@ -12,7 +12,7 @@ The SCOTS transcripts are already in textgrid format, but they need some treatme
 ### Running
 Place this script wherever you want, and ensure that all the textgrids are in their own directory and that there exists a desired output directory for the fixed transcripts. Then, run:
 
-```python clean_scots.py textgrid_input_dir output_dir```
+```python clean_scots.py textgrid_input_dir textgrid_output_dir```
 
 This will put all the fixed textgrid transcripts in their own directory.
 
