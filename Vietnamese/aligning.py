@@ -34,7 +34,7 @@ if host == 'michael-laptop':
 sys.path.insert(0, MFA_REPO_PATH)
 
 
-from aligner.command_line.train_and_align import  align_corpus
+from aligner.command_line.train_and_align import align_corpus
 
 
 def benchmark_align_corpus():
