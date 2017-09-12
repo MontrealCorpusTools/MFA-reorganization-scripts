@@ -1,0 +1,27 @@
+# list of paralinguistic symbols/textgrid issues:
+
+## what characters to remove (which words to fix/keep)
+- "[" and "]" indicate overlapping speakers. This information is encoded in the textgrid anyway through tiers, so it is not necessary to keep this.
+- Additionally, numbers are sometimes used to create distinctive bracketing if there is multiple speaker overlap. So numbers before and after brackets can be removed
+- the '+' character 
+- the '=' character indicates lengthening and so it should be removed
+- '!' marks higher-than-expected pitch
+- ';' marks lower-than-expected pitch
+- '`' marks secondary accent
+- '\' and '/' mark contour
+- '&' marks halves of an intonation unit
+- '~' introduces a name (they usually have modified audio, so I think that marks this fact)
+
+
+## what words to remove
+- capitalized words in parenthesis (i.e. "(COUGH)", "(THROAT)") indicate nonverbal noise from vocal tract. These should be removed
+- '%' is a paralinguistic glottal stop, and should be removed
+- anything preceded or followed by angle brackets (i.e. "<WH", "SOB>") indicates voice quality (or uncertain hearing in case of <X X>, sometimes also code switching)
+- anything in double parentheses is a comment made by the transcriber
+- numbers alone in single parentheses indicate duration
+
+
+## questions
+- "...(x)" marks pauses x seconds long; should these be converted to "SIL" markers? Without the number, they are short pauses (<.2s) -- should these be SIL's or deleted
+- angle brackets around words indicate false start (e.g. "<the> the"). Should these words be retained?
+- what to do about the laugh symbol '@'
