@@ -14,6 +14,7 @@
 import os
 import sys
 import re
+import subprocess
 from textgrid import TextGrid, IntervalTier
 
 input_dir = sys.argv[1]
@@ -56,25 +57,29 @@ def cleanText(text):
     return text
 
 
+
+
 if __name__ == '__main__':
     # Loop through all textgrids
     for file in os.listdir(input_dir):
+        filePath = os.path.join(input_dir, file)
+        outputPath = os.path.join(output_dir, file)
         if file.endswith(".TextGrid"):
             print("Processing " + file + "...")
             filePath = os.path.join(input_dir, file)
             tg = TextGrid()
             tg.read(filePath)  # Read into a textgrid
-        else:
-            continue
 
-        # Clean the text
-        for tier in tg.tiers:
-            for interval in tier:
-                # print repr(interval.mark)
-                interval.mark = cleanText(interval.mark)
-                if interval.mark != "":
-                    print(interval.mark)
+            # Clean the text
+            for tier in tg.tiers:
+                for interval in tier:
+                    # print repr(interval.mark)
+                    interval.mark = cleanText(interval.mark)
+                    if interval.mark != "":
+                        print(interval.mark)
 
-        # Write to file
-        outputPath = os.path.join(output_dir, file)
-        tg.write(outputPath)
+            # Write to file
+            tg.write(outputPath)
+        elif file.endswith('.wav') and not os.path.exists(outputPath):
+
+            subprocess.call(['sox', filePath, outputPath, 'rate', '16000'])
