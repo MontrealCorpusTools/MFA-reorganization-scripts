@@ -64,6 +64,8 @@ if __name__ == '__main__':
     for file in os.listdir(input_dir):
         filePath = os.path.join(input_dir, file)
         outputPath = os.path.join(output_dir, file)
+        if os.path.exists(outputPath):
+            continue
         if file.endswith(".TextGrid"):
             print("Processing " + file + "...")
             filePath = os.path.join(input_dir, file)
@@ -80,6 +82,6 @@ if __name__ == '__main__':
 
             # Write to file
             tg.write(outputPath)
-        elif file.endswith('.wav') and not os.path.exists(outputPath):
+        elif file.endswith('.wav'):
 
             subprocess.call(['sox', filePath, outputPath, 'rate', '16000'])
