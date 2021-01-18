@@ -37,7 +37,7 @@ base_dirs = {k: os.path.join(globalphone_dir, v) for k,v in full_names.items()}
 
 source_dirs = {k: os.path.join(base_dirs[k], v) for k,v in full_names.items()}
 
-data_directory = r'/media/share/corpora/GP_for_MFA'
+data_directory = r'/data/mmcauliffe/GP_for_MFA'
 
 data_dirs = {k: os.path.join(data_directory, k) for k,v in source_dirs.items()}
 
@@ -52,6 +52,8 @@ if __name__ == '__main__':
             print(source_dirs[k],"not found")
             continue
         print(k)
+        if k not in ['AR', 'JA']:
+            continue
 
         globalphone_dict_prep(source_dirs[k],dict_paths[k], data_dirs[k], k)
 
