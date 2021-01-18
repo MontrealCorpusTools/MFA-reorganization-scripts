@@ -67,7 +67,7 @@ lang_dict_utf8mappings = {
                 }
 
 lang_trl_utf8mappings = {
-                'AR': [re.compile('[)(]'), ''],
+                'AR': [(re.compile('[)(]'), '')],
                 'BG': [],
                 'CH': [],
                 'WU': [],
