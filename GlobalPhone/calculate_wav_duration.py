@@ -49,10 +49,13 @@ if __name__ == '__main__':
     for lang in full_names.keys():
         lang_dir = os.path.join(data_directory, lang, 'files')
         speaker_dirs = os.listdir(lang_dir)
-        num_speakers = len(speaker_dirs)
+        num_speakers = 0
         duration = 0
         for s in speaker_dirs:
             speak_dir = os.path.join(lang_dir, s)
+            if not os.path.isdir(speak_dir):
+                continue
+            num_speakers += 1
             for f in os.listdir(speak_dir):
                 if not f.endswith('.wav'):
                     continue
