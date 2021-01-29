@@ -30,7 +30,7 @@ full_names = {
                 'UA': 'Ukrainian'
                 }
 
-data_directory = r'/data/mmcauliffe/GP_for_MFA'
+data_directory = r'/media/share/corpora/GP_for_MFA'
 
 
 def get_wav_info(file_path):
