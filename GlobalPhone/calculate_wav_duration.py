@@ -48,6 +48,9 @@ def get_wav_info(file_path):
 if __name__ == '__main__':
     for lang in full_names.keys():
         lang_dir = os.path.join(data_directory, lang, 'files')
+        if not os.path.exists(lang_dir):
+            print('skipping', lang)
+            continue
         speaker_dirs = os.listdir(lang_dir)
         num_speakers = 0
         duration = 0
